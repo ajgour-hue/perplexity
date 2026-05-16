@@ -10,4 +10,4 @@ export async function testAi() {
         .then((response) => {
             console.log(response.text);
         })
-}
+}                      

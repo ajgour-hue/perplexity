@@ -91,7 +91,7 @@ export const verifyEmail = async (req, res) => {
         <p>Hi ${user.username},</p>
         <p>Your email has been successfully verified. You can now log in to your account.</p>
         <p>Best regards,<br>The Perplexity Team</p>
-        <a href="http://localhost:3000/login">Click here to login</a>
+        <a href="http://localhost:5173/login">Click here to login</a>
     `;
 
         return res.send(html);
