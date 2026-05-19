@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 dotenv.config();
 import cors from "cors";
 import morgan from "morgan";
+import chatRouter from "./routes/chat.routes.js";
 
 const app = express()
 app.post("/test", (req, res) => {
@@ -23,6 +24,7 @@ app.use(cors({
 
 }))
 app.use("/api/auth", authRouter)
+app.use("/api/chats", chatRouter)
 export default app
 
   
