@@ -7,9 +7,11 @@ import userModel from "../models/user.model.js";
 // send a message to the AI and get a response from the AI. If chatId is not provided, create a new chat.
 export async function sendMessage(req, res) {
 
-    const { message, chat: chatId } = req.body;
+    const { message,  chatId } = req.body;
 
-
+console.log("Request Body:", req.body);
+console.log("Message:", message);
+console.log("ChatId:", chatId);
     let title = null, chat = null;
 
     if (!chatId) {
@@ -28,9 +30,11 @@ export async function sendMessage(req, res) {
         role: "user"
     })
 
-    const messages = await messageModel.find({ chat: currentChatId })
+    //  yaha dekhna padeha yh bbaad m dala hain || chat._id .
+    const messages = await messageModel.find({ chat: currentChatId || chat._id }) 
 
-    const result = await generateResponse(messages);
+    const result = await generateResponse(messages); 
+    
 
     const aiMessage = await messageModel.create({
         chat: currentChatId,

@@ -65,5 +65,10 @@ ${message}
     `),
   ]);
 
+  
+    console.log("Gemini Response:", response);
+console.log("Content:", response.content);
+console.log("Type:", typeof response.content);
+
   return response.content;
 }

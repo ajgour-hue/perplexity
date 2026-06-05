@@ -9,4 +9,4 @@ chatRouter.get("/", authUser, getChats);
 chatRouter.get("/:chatId/messages", authUser, getMessages);
 chatRouter.delete("/delete/:chatId/"  ,authUser, deleteChat)
 
-export default chatRouter;
+export default chatRouter;  
