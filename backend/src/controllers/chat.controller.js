@@ -57,7 +57,8 @@ console.log("ChatId:", chatId);
 // get all chats for a user
 export async function getChats(req, res) {
       const user = req.user
-      const chats  = await chatModel.findOne({user: user.id})
+    //   change this to findOne to find only.
+      const chats  = await chatModel.find({user: user.id})
       
       res.status(200).json({
         message:"chats recieved succesfully",
