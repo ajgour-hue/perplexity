@@ -1,5 +1,7 @@
 import React from "react";
 import { RiSunLine } from "@remixicon/react";
+import { useChat } from "../chat/hooks/useChat.js"
+
 
 const Sidebar = ({
   chats = [],
@@ -7,7 +9,10 @@ const Sidebar = ({
   openChat,
   isSidebarOpen,
   setIsSidebarOpen,
+  handleDeleteChat,
 }) => {
+ 
+
   return (
     <>
       {/* Mobile Overlay */}
@@ -20,10 +25,9 @@ const Sidebar = ({
           backdrop-blur-sm
           z-40
           transition-all duration-300
-          ${
-            isSidebarOpen
-              ? "opacity-100 visible"
-              : "opacity-0 invisible"
+          ${isSidebarOpen
+            ? "opacity-100 visible"
+            : "opacity-0 invisible"
           }
         `}
       />
@@ -45,10 +49,9 @@ const Sidebar = ({
           duration-300
           ease-out
 
-          ${
-            isSidebarOpen
-              ? "translate-x-0"
-              : "-translate-x-full md:translate-x-0"
+          ${isSidebarOpen
+            ? "translate-x-0"
+            : "-translate-x-full md:translate-x-0"
           }
         `}
       >
@@ -110,10 +113,9 @@ const Sidebar = ({
                   truncate
                   text-[15px]
                   transition
-                  ${
-                    currentChatId === chat.id
-                      ? "bg-white/10 text-white"
-                      : "text-zinc-400 hover:bg-white/5 hover:text-white"
+                  ${currentChatId === chat.id
+                    ? "bg-white/10 text-white"
+                    : "text-zinc-400 hover:bg-white/5 hover:text-white"
                   }
                 `}
               >
@@ -121,14 +123,23 @@ const Sidebar = ({
               </button>
 
               <button
+                onClick={() => {
+                  const confirmDelete = window.confirm(
+                    "Delete this chat?"
+                  );
+
+                  if (confirmDelete) {
+                   handleDeleteChat(chat.id);
+                  }
+                }}
                 className="
-                  cursor-pointer
-                  opacity-0
-                  group-hover:opacity-100
-                  text-zinc-500
-                  hover:text-red-400
-                  transition
-                "
+    cursor-pointer
+    opacity-0
+    group-hover:opacity-100
+    text-zinc-500
+    hover:text-red-400
+    transition
+  "
               >
                 🗑️
               </button>

@@ -54,6 +54,8 @@ const Dashboard = () => {
   const handleSubmitMessage = async (event) => {
     event.preventDefault()
 
+  console.log("Submit Clicked");
+
     const trimmedMessage = chatInput.trim()
 
     if (!trimmedMessage) return
@@ -94,6 +96,7 @@ const Dashboard = () => {
         openChat={openChat}
         isSidebarOpen={isSidebarOpen}
         setIsSidebarOpen={setIsSidebarOpen}
+        handleDeleteChat={chat.handleDeleteChat}
       />
 
       {/* Main Area */}

@@ -9,7 +9,7 @@ import { searchInternet } from "./internet.service.js";
 
 // Gemini model
 const geminiModel = new ChatGoogleGenerativeAI({
-  model: "gemini-2.5-flash-lite",
+  model: "gemini-1.5-flash",
   apiKey: process.env.GEMINI_API_KEY,
 });
 
@@ -44,24 +44,38 @@ const searchTool =  tool(
 )
 
 // agent that uses the search tool and the mistral model
-const agent = createAgent({
-  model: geminiModel,
+const agent = createAgent({ 
+  model: mistralModel,
   tools: [searchTool],
 })
 
-// response
+
+
 // export async function generateResponse(messages) {
+//   try {
 //     console.log("Received messages:", messages);
-//     const response = await geminiModel.invoke(messages.map(msg => {
-//         if (msg.role == "user") {
-//             return new HumanMessage(msg.content)
-//         } else if (msg.role == "ai") {
-//             return new AIMessage(msg.content)
+
+//     const response = await mistralModel.invoke(
+//       messages.map((msg) => {
+//         if (msg.role === "user") {
+//           return new HumanMessage(msg.content);
 //         }
-//     }));
+
+//         if (msg.role === "ai") {
+//           return new AIMessage(msg.content);
+//         }
+//       })
+//     );
+
+//     console.log("Gemini Response:", response);
 
 //     return response.content;
+//   } catch (error) {
+//     console.error("GEMINI ERROR:", error);
+//     throw error;
+//   }
 // }
+
 
 // agent response
 export async function generateResponse(messages) {

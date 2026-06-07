@@ -80,10 +80,30 @@ export const useChat = () => {
 
   }
 
+  async function handleDeleteChat(chatId) {
+    try {
+        dispatch(setLoading(true));
+
+        await deleteChat(chatId);
+
+        // chat list refresh
+        await handleGetChats();
+
+        dispatch(setCurrentChatId(null));
+
+    } catch (error) {
+        console.error(error);
+        dispatch(setError(error.message));
+    } finally {
+        dispatch(setLoading(false));
+    }
+}
+
     return {
         initializeSocketConnection,
         handleSendMessage,
         handleGetChats,
+        handleDeleteChat,
         handleOpenChat,
     }
 
