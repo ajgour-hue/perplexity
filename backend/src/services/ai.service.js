@@ -1,17 +1,20 @@
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
-import {
-  HumanMessage,
-  SystemMessage,
-  AIMessage
-} from "@langchain/core/messages";
+import { HumanMessage,  SystemMessage,  AIMessage } from "@langchain/core/messages";
+import { tool } from "@langchain/core/tools";
+import { createAgent } from "langchain";
 import { ChatMistralAI } from "@langchain/mistralai";
 import { ChatOpenAI } from "@langchain/openai";
+import * as z from "zod";
+import { searchInternet } from "./internet.service.js";
 
+// Gemini model
 const geminiModel = new ChatGoogleGenerativeAI({
   model: "gemini-2.5-flash-lite",
   apiKey: process.env.GEMINI_API_KEY,
 });
 
+
+// Mistral model
 const mistralModel = new ChatMistralAI({
   model: "mistral-small-latest",
   apiKey: process.env.MISTRAL_API_KEY,
@@ -28,19 +31,52 @@ const openrouterModel = new ChatOpenAI({
   apiKey: process.env.OPENROUTER_API_KEY,
 });
 
-// response
-export async function generateResponse(messages) {
+// tool for web search
+const searchTool =  tool(
+  searchInternet,
+  {
+    name: "searchInternet",
+    description: "Search the internet for recent information.",
+    schema: z.object({
+      query: z.string().describe("The search query to look up the internet."),
+    }),
+  }
+)
 
-    const response = await geminiModel.invoke(messages.map(msg => {
+// agent that uses the search tool and the mistral model
+const agent = createAgent({
+  model: geminiModel,
+  tools: [searchTool],
+})
+
+// response
+// export async function generateResponse(messages) {
+//     console.log("Received messages:", messages);
+//     const response = await geminiModel.invoke(messages.map(msg => {
+//         if (msg.role == "user") {
+//             return new HumanMessage(msg.content)
+//         } else if (msg.role == "ai") {
+//             return new AIMessage(msg.content)
+//         }
+//     }));
+
+//     return response.content;
+// }
+
+// agent response
+export async function generateResponse(messages) {
+    console.log("Received messages:", messages);
+    const response = await agent.invoke({
+      messages: messages.map(msg => {
         if (msg.role == "user") {
             return new HumanMessage(msg.content)
         } else if (msg.role == "ai") {
             return new AIMessage(msg.content)
         }
-    }));
+      }),
+    });
 
-    return response.content;
-
+    return response.messages[response.messages.length - 1].content;
 }
 
 // title for the chat
