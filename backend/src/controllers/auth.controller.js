@@ -6,104 +6,106 @@ import dotenv from "dotenv"
 dotenv.config()
 // register user controller function
 export const register = async (req, res) => {
-    
-        const { username, email, password } = req.body;
 
-        const existingUser = await userModel.findOne({
-            $or: [
-                { email: email },
-                { username: username }
-            ]
+    const { username, email, password } = req.body;
+
+    const existingUser = await userModel.findOne({
+        $or: [
+            { email: email },
+            { username: username }
+        ]
+    });
+
+    if (existingUser) {
+        return res.status(400).json({
+            message: "User with this email or username already exists",
+            success: false
         });
+    }
 
-        if (existingUser) {
-            return res.status(400).json({
-                message: "User with this email or username already exists",
-                success: false
-            });
-        }
+    // create user
+    const user = await userModel.create({
+        username,
+        email,
+        password
+    });
 
-        // create user
-        const user = await userModel.create({
-            username,
-            email,
-            password
-        });
-
-         const emailVerificationToken = jwt.sign({
+    const emailVerificationToken = jwt.sign({
         email: user.email,
     }, process.env.JWT_SECRET)
 
 
-        await sendEmail({
-            to:email,
-            subject: "Welcome to Perplexity!",
+    await sendEmail({
+        to: email,
+        subject: "Welcome to Perplexity!",
         html: `
                 <p>Hi ${username},</p>
                 <p>Thank you for registering at <strong>Perplexity</strong>. We're excited to have you on board!</p>
                 <p>To get started, please verify your email address by clicking the link below:</p>
-                <a href="http://localhost:3000/api/auth/verify-email?token=${emailVerificationToken}">Verify Email</a>
+                <a href="https://perplexity-wvf6.onrender.com/api/auth/verify-email?token=${emailVerificationToken}">Verify Email</a>
                 <p>If you did not create an account, please ignore this email.</p>
                 <p>Best regards,<br>The Perplexity Team</p>
         `
-        })
+    })
 
-        res.status(201).json({
-            message: "User registered successfully",
-            success: true,
-            user: {
-                id: user._id,
-                username: user.username,
-                email: user.email
-            }
-        });
+    res.status(201).json({
+        message: "User registered successfully",
+        success: true,
+        user: {
+            id: user._id,
+            username: user.username,
+            email: user.email
+        }
+    });
 
-    
-   
+
+
 };
 
 // verify email controller function
 
 export const verifyEmail = async (req, res) => {
     console.log("VERIFY ROUTE HIT");
-        const {token} = req.query;
+    const { token } = req.query;
 
 
     // verify token and activate user account logic here
-    try{
+    try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-        const user = await userModel.findOne({email: decoded.email });
+        const user = await userModel.findOne({ email: decoded.email });
 
-        if(!user){
+        if (!user) {
             return res.status(400).json({
                 message: "Invalid token",
                 success: false
             });
         }
 
-         user.verified = true; 
+        user.verified = true;
 
         await user.save();
 
-        const html = 
-    `
+        const html =
+            `
         <p>Hi ${user.username},</p>
         <p>Your email has been successfully verified. You can now log in to your account.</p>
         <p>Best regards,<br>The Perplexity Team</p>
-        <a href="http://localhost:5173/login">Click here to login</a>
+       <a href="https://perplexity-frontend-hwcu.onrender.com/login">
+  Click here to login
+</a>
     `;
 
         return res.send(html);
     }
-    catch(error){
+    catch (error) {
         console.error(error);
         res.status(400).json({
             message: "Invalid or expired token",
             success: false,
             error: error.message
         });
-    }   
+    }
 }
 
 export const login = async (req, res) => {
@@ -111,7 +113,7 @@ export const login = async (req, res) => {
     const { email, password } = req.body;
 
 
-    
+
     const user = await userModel.findOne({ email });
 
     if (!user) {
@@ -145,12 +147,19 @@ export const login = async (req, res) => {
         email: user.email,
         username: user.username
     }, process.env.JWT_SECRET, { expiresIn: '7d' });
-    
+
+    // res.cookie('token', token, {
+    //     httpOnly: true,
+    //     secure: process.env.NODE_ENV === 'production',
+    //     sameSite: 'strict',
+    //     maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+    // });
+
     res.cookie('token', token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+        secure: true,
+        sameSite: 'none',
+        maxAge: 7 * 24 * 60 * 60 * 1000
     });
 
     res.json({
@@ -163,7 +172,7 @@ export const login = async (req, res) => {
         },
     });
 
-         
+
 
 }
 
@@ -177,7 +186,7 @@ export const getMe = async (req, res) => {
             message: "User not found",
             success: false
         });
-    }   
+    }
     res.json({
         message: "User fetched successfully",
         success: true,
