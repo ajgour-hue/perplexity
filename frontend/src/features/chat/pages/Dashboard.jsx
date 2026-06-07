@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useChat } from '../hooks/useChat'
+import {
+  RiGlobalLine,
+  RiBarChartBoxLine,
+  RiSparklingLine,
+  RiCompass3Line,
+} from "@remixicon/react";
+import Sidebar from '../../component/Sidebar';
 
 const Dashboard = () => {
   const chat = useChat()
@@ -12,11 +19,37 @@ const Dashboard = () => {
     (state) => state.chat.currentChatId
   )
 
+
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   useEffect(() => {
     chat.initializeSocketConnection(),
 
-    chat.handleGetChats()
+      chat.handleGetChats()
   }, [])
+
+
+  // hardcoded suggestions and sources for the demo, can be made dynamic in the future
+  const suggestions = [
+    "Summarize this: Tech | CNN Business",
+    "Tell me more about Tech News | Today's Latest Tech...",
+    "What are the top 5 programming news today?",
+    "Explain the latest tech market shifts",
+    "Search for best developer tools 2026",
+  ];
+
+  // these sources are just for demo purposes, we can make them dynamic in the future as well.
+  const sources = [
+    {
+      title: "Tech | CNN Business",
+      site: "NEWS · CNN.COM",
+    },
+    {
+      title: "Tech News | Today's Latest Technology News | Reuters",
+      site: "NEWS · REUTERS.COM",
+    },
+  ];
+
 
   const handleSubmitMessage = async (event) => {
     event.preventDefault()
@@ -37,212 +70,211 @@ const Dashboard = () => {
     chat.handleOpenChat(chatId)
   }
 
-  // return (
-  //   <main className='min-h-screen w-full bg-[#07090f] p-3 text-white md:p-5'>
-  //     <section className='mx-auto flex h-[calc(100vh-1.5rem)] w-full gap-4 rounded-3xl p-1 md:h-[calc(100vh-2.5rem)] md:gap-6'>
-        
-  //       {/* Sidebar */}
-  //       <aside className='hidden h-full w-72 shrink-0 rounded-3xl bg-[#080b12] p-4 md:flex md:flex-col border border-white/10'>
-  //         <h1 className='mb-5 text-3xl font-semibold tracking-tight'>
-  //           Perplexity
-  //         </h1>
+  // the quick search buttons handlinhg
+  const handleSearch = async (query) => {
+    setChatInput(query);
 
-  //       <div className='space-y-2 overflow-y-auto '   style={{
-  //   scrollbarWidth: 'none',
-  //   msOverflowStyle: 'none',
-  // }}>
-  //           {Object.values(chats).map((chat, index) => (
-  //             <button 
-  //             onClick={() => openChat(chat.id)}
-  //               key={index}
-  //               type='button'
-  //               className='w-full rounded-xl border border-white/60 bg-transparent px-3 py-2 text-left text-base font-medium text-white/90 transition hover:border-white hover:text-white'
-  //             >
-  //               {chat.title}
-  //             </button>
-  //           ))}
-  //         </div>
-  //       </aside>
+    // if there's no current chat, create one first before sending the message
+    await chat.handleSendMessage({
+      message: query,
+      chatId: currentChatId,
+    });
+  };
 
-  //       {/* Chat Section */}
-  //       <section className='relative max-w-3/5 mx-auto flex h-full min-w-0 flex-1 flex-col gap-4' >
-          
-  //         {/* Messages */}
-  //         <div className='messages flex-1 space-y-3 overflow-y-auto pr-1 pb-30'  style={{
-  //   scrollbarWidth: 'none',
-  //   msOverflowStyle: 'none',
-  // }}>
-  //           {currentChatId ? (
-  //             chats[currentChatId]?.messages?.map((message, index) => (
-  //               <div
-  //                 key={index}
-  //                 className={`max-w-[82%] w-fit rounded-2xl px-4 py-3 text-sm md:text-base ${
-  //                   message.role === 'user'
-  //                     ? 'ml-auto rounded-br-none bg-white/12 text-white'
-  //                     : 'mr-auto border border-white/25 bg-[#0f1626] text-white/90'
-  //                 }`}
-  //               >
-  //                 <p>{message.content}</p>
-  //               </div>
-  //             ))
-  //           ) : (
-  //             <div className='flex h-full items-center justify-center text-white/40'>
-  //               Start a conversation...
-  //             </div>
-  //           )}
-  //         </div>
-
-  //         {/* Input */}
-  //         <footer className='absolute bottom-2 w-full rounded-3xl border border-white/60 bg-[#080b12] p-4 md:p-5'>
-  //           <form
-  //             onSubmit={handleSubmitMessage}
-  //             className='flex flex-col gap-3 md:flex-row'
-  //           >
-  //             <input
-  //               type='text'
-  //               value={chatInput}
-  //               onChange={(event) =>
-  //                 setChatInput(event.target.value)
-  //               }
-  //               placeholder='Type your message...'
-  //               className='w-full rounded-2xl border border-white/50 bg-transparent px-4 py-3 text-lg text-white outline-none transition placeholder:text-white/45 focus:border-white/90'
-  //             />
-
-  //             <button
-  //               type='submit'
-  //               disabled={!chatInput.trim()}
-  //               className='rounded-2xl border border-white/60 px-6 py-3 text-lg font-semibold text-white transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50'
-  //             >
-  //               Send
-  //             </button>
-  //           </form>
-  //         </footer>
-  //       </section>
-  //     </section>
-  //   </main>
-  // )
 
   return (
-  <div className="flex min-h-screen bg-[#050505] text-zinc-100 overflow-hidden">
-    
-    {/* Sidebar */}
-    <aside className="hidden md:flex md:w-64 flex-col border-r border-white/10 bg-[#080b12]">
-      <div className="h-16 flex items-center px-6 border-b border-white/5">
-        <h1 className="text-xl font-semibold tracking-tight">
-          Perplexity
-        </h1>
-      </div>
+    <div className="flex min-h-screen bg-[#050505] text-zinc-100 overflow-hidden">
 
-      <div
-        className="flex-1 overflow-y-auto p-4 space-y-2"
-        style={{
-          scrollbarWidth: "none",
-          msOverflowStyle: "none",
-        }}
-      >
-        {Object.values(chats).map((chat, index) => (
+      {/* Sidebar */}
+
+
+      <Sidebar
+        chats={chats}
+        currentChatId={currentChatId}
+        openChat={openChat}
+        isSidebarOpen={isSidebarOpen}
+        setIsSidebarOpen={setIsSidebarOpen}
+      />
+
+      {/* Main Area */}
+<div className="flex-1 md:ml-[210px] flex flex-col h-screen overflow-hidden">
+
+
+      {/* hamburger menu */}
+        <div className="md:hidden h-14 flex items-center px-4 border-b border-white/10 bg-[#050505]">
           <button
-            key={index}
-            onClick={() => openChat(chat.id)}
-            className={`w-full rounded-xl px-4 py-3 text-left transition-all ${
-              currentChatId === chat.id
-                ? "bg-white/10 text-white"
-                : "hover:bg-white/5 text-zinc-400"
-            }`}
+            onClick={() => setIsSidebarOpen(true)}
+            className="
+      text-white
+      text-2xl
+      cursor-pointer
+      transition-transform
+      hover:scale-110
+    "
           >
-            {chat.title}
+            ☰
           </button>
-        ))}
-      </div>
-    </aside>
+        </div>
 
-    {/* Main Area */}
-    <div className="flex flex-1 flex-col h-screen overflow-hidden">
+        {/* Chat */}
+        <div className="flex-1 overflow-hidden flex flex-col">
 
-      {/* Header */}
-      <header className="h-16 shrink-0 border-b border-white/5 flex items-center px-6">
-        <h2 className="text-lg font-medium text-zinc-300">
-          {chats[currentChatId]?.title || "New Chat"}
-        </h2>
-      </header>
+          {/* Messages */}
+          <div
+          className="flex-1 overflow-y-auto px-3 md:px-12 py-4 md:py-6 space-y-6"
+            style={{
+              scrollbarWidth: "none",
+              msOverflowStyle: "none",
+            }}
+          >
+            {currentChatId ? (
+            <div className="max-w-5xl mx-auto px-4 md:px-8 py-6 md:py-10">
+                {chats[currentChatId]?.messages?.map((message, index) => (
+                  <div
+                    key={index}
+                    className={`mb-6 flex ${message.role === "user"
+                      ? "justify-end"
+                      : "justify-start"
+                      }`}
+                  >
+                    <div
+                      className={`max-w-3xl rounded-3xl px-6 py-4 text-base leading-relaxed ${message.role === "user"
+                        ? "bg-[#1c1c1c] text-white"
+                        : " text-zinc-200"
+                        }`}
+                    >
+                      {message.content}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
 
-      {/* Chat */}
-      <div className="flex-1 overflow-hidden flex flex-col">
+              <div className="h-full overflow-y-auto">
+             <div className="max-w-6xl mx-auto px-4 md:px-8 pt-8 md:pt-16 pb-24">
 
-        {/* Messages */}
-        <div
-          className="flex-1 overflow-y-auto px-4 md:px-10 py-6 space-y-6"
-          style={{
-            scrollbarWidth: "none",
-            msOverflowStyle: "none",
-          }}
-        >
-          {currentChatId ? (
-            chats[currentChatId]?.messages?.map((message, index) => (
-              <div
-                key={index}
-                className={`flex ${
-                  message.role === "user"
-                    ? "justify-end"
-                    : "justify-start"
-                }`}
-              >
-                <div
-                  className={`max-w-3xl rounded-3xl px-5 py-4 text-sm md:text-base leading-relaxed ${
-                    message.role === "user"
-                      ? "bg-[#1c1c1c] text-white"
-                      : "bg-[#0d1117] border-none text-zinc-200"
-                  }`}
-                >
-                  {message.content}
+                  {/* Logo */}
+                  <div className="flex items-center justify-center mb-12">
+             <img
+  src="/perplexity.svg"
+  alt="Perplexity"
+  className="h-8 md:h-12 w-auto brightness-0 invert"
+/>
+
+<span className="ml-3 text-4xl md:text-8xl font-extralight text-white tracking-tight">
+  Perplexity
+</span>
+                  </div>
+
+                  {/* Category Buttons */}
+                 <div className="flex flex-wrap justify-center gap-2 md:gap-4 mb-8 md:mb-12 px-2">
+
+                    <button
+                      onClick={() => handleSearch("Latest Trending Technology News")}
+                      className="flex items-center gap-2 px-4 md:px-6 py-2 text-sm md:text-base rounded-full border border-zinc-800 text-zinc-300 hover:bg-zinc-900 transition"
+                    >
+                      <RiGlobalLine size={16} />
+                      <span>Trending Tech</span>
+                    </button>
+
+                    <button
+                      onClick={() => handleSearch("Top Startup Companies 2025")}
+                      className="flex items-center gap-2 px-4 md:px-6 py-2 text-sm md:text-base rounded-full border border-zinc-800 text-zinc-300 hover:bg-zinc-900 transition"
+                    >
+                      <RiBarChartBoxLine size={16} />
+                      <span>Startups</span>
+                    </button>
+
+                    <button
+                      onClick={() => handleSearch("Best AI Tools in 2025")}
+                      className="flex items-center gap-2 px-4 md:px-6 py-2 text-sm md:text-base rounded-full border border-zinc-800 text-zinc-300 hover:bg-zinc-900 transition"
+                    >
+                      <RiSparklingLine size={16} />
+                      <span>AI Tools</span>
+                    </button>
+
+                    <button
+                      onClick={() => handleSearch("Latest Gadgets and Tech Products")}
+                      className="flex items-center gap-2 px-4 md:px-6 py-2 text-sm md:text-base rounded-full border border-zinc-800 text-zinc-300 hover:bg-zinc-900 transition"
+                    >
+                      <RiCompass3Line size={16} />
+                      <span>Gadgets</span>
+                    </button>
+
+                  </div>
+
+
+
+                  {/* Suggestions */}
+                  <div className="space-y-0 mb-10 md:mb-12 max-w-5xl mx-auto w-full">
+                    {suggestions.map((item) => (
+                      <button
+                        key={item}
+                        onClick={() => handleSearch(item)}
+                        className="w-full text-left py-4 border-b border-white/10 text-zinc-400 hover:text-white transition"
+                      >
+                        {item}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Source Cards */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+                    {sources.map((source) => (
+                      <button
+                        key={source.title}
+                        onClick={() => handleSearch(source.title)}
+                        className="rounded-3xl border border-white/10 bg-[#0b0b0b] p-6 text-left hover:bg-[#111] transition"
+                      >
+                        <h3 className="text-lg font-semibold text-white">
+                          {source.title}
+                        </h3>
+
+                        <p className="mt-2 text-sm text-zinc-500 uppercase">
+                          {source.site}
+                        </p>
+                      </button>
+                    ))}
+                  </div>
+
                 </div>
               </div>
-            ))
-          ) : (
-            <div className="h-full flex items-center justify-center">
-              <div className="text-center">
-                <h2 className="text-3xl font-semibold mb-3">
-                  How can I help you?
-                </h2>
-                <p className="text-zinc-500">
-                  Start a new conversation
-                </p>
+            )}
+          </div>
+
+          {/* Input Area */}
+          <div className="shrink-0 px-3 md:px-8 pb-4 md:pb-5">
+            <form
+              onSubmit={handleSubmitMessage}
+             className="max-w-4xl mx-auto w-full"
+            >
+              <div className="flex items-center gap-3 rounded-3xl border border-white/10 bg-[#0b0b0b] px-4 py-3 shadow-lg">
+                <input
+                  type="text"
+                  value={chatInput}
+                  onChange={(e) =>
+                    setChatInput(e.target.value)
+                  }
+                  placeholder="Ask anything..."
+                  className="flex-1 bg-transparent outline-none text-white placeholder:text-zinc-500"
+                />
+
+                <button
+                  type="submit"
+                  disabled={!chatInput.trim()}
+                  className=" cursor-pointer rounded-2xl bg-white text-black px-5 py-2 font-medium transition hover:opacity-90 disabled:opacity-40"
+                >
+                  Send
+                </button>
               </div>
-            </div>
-          )}
-        </div>
+            </form>
+          </div>
 
-        {/* Input Area */}
-        <div className="shrink-0 px-4 md:px-8 pb-5">
-          <form
-            onSubmit={handleSubmitMessage}
-            className="max-w-4xl mx-auto"
-          >
-            <div className="flex items-center gap-3 rounded-3xl border border-white/10 bg-[#0b0b0b] px-4 py-3 shadow-lg">
-              <input
-                type="text"
-                value={chatInput}
-                onChange={(e) =>
-                  setChatInput(e.target.value)
-                }
-                placeholder="Ask anything..."
-                className="flex-1 bg-transparent outline-none text-white placeholder:text-zinc-500"
-              />
-
-              <button
-                type="submit"
-                disabled={!chatInput.trim()}
-                className="rounded-2xl bg-white text-black px-5 py-2 font-medium transition hover:opacity-90 disabled:opacity-40"
-              >
-                Send
-              </button>
-            </div>
-          </form>
         </div>
       </div>
+
     </div>
-  </div>
-)
+  )
 }
 
 export default Dashboard

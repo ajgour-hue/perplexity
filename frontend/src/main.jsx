@@ -4,6 +4,7 @@ import './app/index.css'
 import App from './app/App.jsx'
 import { store } from './app/app.store'
 import { Provider } from 'react-redux'
+import './app/index.css'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
