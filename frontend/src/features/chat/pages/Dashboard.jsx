@@ -8,6 +8,8 @@ import {
   RiCompass3Line,
 } from "@remixicon/react";
 import Sidebar from '../../component/Sidebar';
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 const Dashboard = () => {
   const chat = useChat()
@@ -54,7 +56,7 @@ const Dashboard = () => {
   const handleSubmitMessage = async (event) => {
     event.preventDefault()
 
-  console.log("Submit Clicked");
+    console.log("Submit Clicked");
 
     const trimmedMessage = chatInput.trim()
 
@@ -100,10 +102,10 @@ const Dashboard = () => {
       />
 
       {/* Main Area */}
-<div className="flex-1 md:ml-[210px] flex flex-col h-screen overflow-hidden">
+      <div className="flex-1 md:ml-[210px] flex flex-col h-screen overflow-hidden">
 
 
-      {/* hamburger menu */}
+        {/* hamburger menu */}
         <div className="md:hidden h-14 flex items-center px-4 border-b border-white/10 bg-[#050505]">
           <button
             onClick={() => setIsSidebarOpen(true)}
@@ -124,14 +126,14 @@ const Dashboard = () => {
 
           {/* Messages */}
           <div
-          className="flex-1 overflow-y-auto px-3 md:px-12 py-4 md:py-6 space-y-6"
+            className="flex-1 overflow-y-auto px-3 md:px-12 py-4 md:py-6 space-y-6"
             style={{
               scrollbarWidth: "none",
               msOverflowStyle: "none",
             }}
           >
             {currentChatId ? (
-            <div className="max-w-5xl mx-auto px-4 md:px-8 py-6 md:py-10">
+              <div className="max-w-5xl mx-auto px-4 md:px-8 py-6 md:py-10">
                 {chats[currentChatId]?.messages?.map((message, index) => (
                   <div
                     key={index}
@@ -143,10 +145,19 @@ const Dashboard = () => {
                     <div
                       className={`max-w-3xl rounded-3xl px-6 py-4 text-base leading-relaxed ${message.role === "user"
                         ? "bg-[#1c1c1c] text-white"
-                        : " text-zinc-200"
+                        : "text-zinc-200"
                         }`}
                     >
-                      {message.content}
+                      {message.role === "assistant" ? (
+                        <ReactMarkdown
+                          remarkPlugins={[remarkGfm]}
+                          className="prose prose-invert max-w-none"
+                        >
+                          {message.content}
+                        </ReactMarkdown>
+                      ) : (
+                        message.content
+                      )}
                     </div>
                   </div>
                 ))}
@@ -154,23 +165,23 @@ const Dashboard = () => {
             ) : (
 
               <div className="h-full overflow-y-auto">
-             <div className="max-w-6xl mx-auto px-4 md:px-8 pt-8 md:pt-16 pb-24">
+                <div className="max-w-6xl mx-auto px-4 md:px-8 pt-8 md:pt-16 pb-24">
 
                   {/* Logo */}
                   <div className="flex items-center justify-center mb-12">
-             <img
-  src="/perplexity.svg"
-  alt="Perplexity"
-  className="h-8 md:h-12 w-auto brightness-0 invert"
-/>
+                    <img
+                      src="/perplexity.svg"
+                      alt="Perplexity"
+                      className="h-8 md:h-12 w-auto brightness-0 invert"
+                    />
 
-<span className="ml-3 text-4xl md:text-8xl font-extralight text-white tracking-tight">
-  Perplexity
-</span>
+                    <span className="ml-3 text-4xl md:text-8xl font-extralight text-white tracking-tight">
+                      Perplexity
+                    </span>
                   </div>
 
                   {/* Category Buttons */}
-                 <div className="flex flex-wrap justify-center gap-2 md:gap-4 mb-8 md:mb-12 px-2">
+                  <div className="flex flex-wrap justify-center gap-2 md:gap-4 mb-8 md:mb-12 px-2">
 
                     <button
                       onClick={() => handleSearch("Latest Trending Technology News")}
@@ -249,7 +260,7 @@ const Dashboard = () => {
           <div className="shrink-0 px-3 md:px-8 pb-4 md:pb-5">
             <form
               onSubmit={handleSubmitMessage}
-             className="max-w-4xl mx-auto w-full"
+              className="max-w-4xl mx-auto w-full"
             >
               <div className="flex items-center gap-3 rounded-3xl border border-white/10 bg-[#0b0b0b] px-4 py-3 shadow-lg">
                 <input

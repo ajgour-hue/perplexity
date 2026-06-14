@@ -2,7 +2,10 @@ import React from "react";
 import { RiSunLine } from "@remixicon/react";
 import { useChat } from "../chat/hooks/useChat.js"
 
+import { useNavigate } from "react-router-dom";
 
+import { 
+  RiLogoutBoxRLine } from "react-icons/ri";
 const Sidebar = ({
   chats = [],
   currentChatId,
@@ -11,6 +14,10 @@ const Sidebar = ({
   setIsSidebarOpen,
   handleDeleteChat,
 }) => {
+const navigate = useNavigate();
+
+const { handleLogout } = useChat();
+  
  
 
   return (
@@ -147,23 +154,38 @@ const Sidebar = ({
           ))}
         </div>
 
+
         {/* Footer */}
-        <div className="p-4 shrink-0 ">
-          <button
-            className="
-              cursor-pointer
-              flex items-center gap-3
-              text-zinc-400
-              hover:text-white
-              transition-colors
-              text-[15px]
-              font-medium
-            "
-          >
-            <RiSunLine size={20} />
-            <span>Light Mode</span>
-          </button>
-        </div>
+          <div className="p-4 shrink-0 ">
+           <button
+    onClick={async () => {
+      const confirmLogout = window.confirm(
+        "Are you sure you want to logout?"
+      );
+
+      if (confirmLogout) {
+       console.log("Logout clicked");
+  await handleLogout();
+  console.log("Logout success");
+  navigate("/login");
+  window.location.href = "/login";
+      }
+    }}
+              className="
+                cursor-pointer
+                flex items-center gap-3
+                text-zinc-400
+                hover:text-white
+                transition-colors
+                text-[15px]
+                font-medium
+              "
+            >
+         
+            <span>LOGOUT</span>
+             <RiLogoutBoxRLine size={20} />
+            </button>
+          </div>
       </aside>
     </>
   );

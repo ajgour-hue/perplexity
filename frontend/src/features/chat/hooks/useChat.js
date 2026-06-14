@@ -1,5 +1,5 @@
 import { initializeSocketConnection } from "../service/chat.socket";
-import { sendMessage, getChats, getMessages, deleteChat } from "../service/chat.api.js"
+import { sendMessage, getChats, getMessages, deleteChat ,logout } from "../service/chat.api.js"
 import { setChats, setCurrentChatId, setError, setLoading, createNewChat, addNewMessage  ,addMessages } from "../chat.slice.js";
 import { useDispatch } from "react-redux";
 
@@ -80,6 +80,8 @@ export const useChat = () => {
 
   }
 
+
+
   async function handleDeleteChat(chatId) {
     try {
         dispatch(setLoading(true));
@@ -99,12 +101,20 @@ export const useChat = () => {
     }
 }
 
+async function handleLogout() {
+  await logout();
+  dispatch(setChats({}));
+  dispatch(setCurrentChatId(null));
+}
+
+
     return {
         initializeSocketConnection,
         handleSendMessage,
         handleGetChats,
         handleDeleteChat,
         handleOpenChat,
+        handleLogout,
     }
 
 }

@@ -1,5 +1,5 @@
 import {Router} from 'express';
-import { login, register, verifyEmail } from '../controllers/auth.controller.js';
+import { login, register, verifyEmail , logout} from '../controllers/auth.controller.js';
 import { registerValidator } from '../validators/auth.validator.js';
 import { authUser } from '../middleware/auth.middleware.js';
 import { getMe } from '../controllers/auth.controller.js';
@@ -43,4 +43,12 @@ authRouter.post('/login', login);
  */
 authRouter.get('/get-me', authUser, getMe);
 
+
+/**
+ * @route GET /api/auth/get-me
+ * @desc Get current logged in user details
+ * @access Private
+ * @header { Authorization: Bearer <token> }
+ */
+authRouter.post("/logout",logout)
 export default authRouter; 
