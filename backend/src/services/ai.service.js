@@ -78,6 +78,8 @@ const agent = createAgent({
 
 
 // agent response
+
+console.log("🔥 generateResponse called");
 export async function generateResponse(messages) {
     console.log("Received messages:", messages);
     const response = await agent.invoke({
@@ -90,6 +92,7 @@ export async function generateResponse(messages) {
       }),
     });
 
+    console.log("🔥 Returning test markdown");
     return response.messages[response.messages.length - 1].content;
 }
 

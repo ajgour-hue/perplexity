@@ -23,6 +23,7 @@ const Dashboard = () => {
     (state) => state.chat.currentChatId
   )
 
+  const currentChat = chats[currentChatId];
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -32,7 +33,15 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
+    // focus the input field
     inputRef.current?.focus();
+
+    // update the document title on favicon site
+    if (currentChat?.title) {
+      document.title = `${currentChat.title}`;
+    } else {
+      document.title = "Perplexity Clone";
+    }
   }, [currentChatId]);
 
 
@@ -158,7 +167,7 @@ const Dashboard = () => {
                         : "text-zinc-200"
                         }`}
                     >
-                      {message.role === "assistant" ? (
+                      {message.role === "ai" ? (
                         <ReactMarkdown
                           remarkPlugins={[remarkGfm]}
                           className="
@@ -170,9 +179,12 @@ const Dashboard = () => {
     prose-strong:text-white
     prose-li:text-zinc-200
     prose-code:text-green-400
+    prose-pre:bg-zinc-900
+    prose-pre:border
+    prose-pre:border-zinc-700
   "
                         >
-                          {message.content.replace(/\\n/g, "\n")}
+                          {message.content}
                         </ReactMarkdown>
                       ) : (
                         message.content
