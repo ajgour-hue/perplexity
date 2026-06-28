@@ -26,7 +26,8 @@ const Login = () => {
 
         const data = await handleLogin(payload)
         if (data?.success) {
-            navigate("/")
+            // navigate("/")
+            navigate("/dashboard", { replace: true });
         }
     }
 
