@@ -55,7 +55,7 @@ const Sidebar = ({ chats = [], currentChatId, openChat, isSidebarOpen, setIsSide
         className={`
           fixed md:fixed
           top-0 left-0
-          h-screen
+         h-dvh
           w-[260px] md:w-[210px]
           flex flex-col
           bg-[#050505]
@@ -150,7 +150,7 @@ const Sidebar = ({ chats = [], currentChatId, openChat, isSidebarOpen, setIsSide
                     handleDeleteChat(chat.id);
                   }
                 }}
-              className="
+                className="
   cursor-pointer
   opacity-100
   md:opacity-0
@@ -174,10 +174,10 @@ const Sidebar = ({ chats = [], currentChatId, openChat, isSidebarOpen, setIsSide
         <div className="relative p-4 flex gap-3">
           {/* Settings Button */}
           <button
-           onClick={(e) => {
-      e.stopPropagation();
-      setOpenSettings(!openSettings);
-    }}
+            onClick={(e) => {
+              e.stopPropagation();
+              setOpenSettings(!openSettings);
+            }}
             className="cursor-pointer text-zinc-400 hover:text-white transition-colors"
           >
 
