@@ -45,7 +45,7 @@ const searchTool =  tool(
 
 // agent that uses the search tool and the mistral model
 const agent = createAgent({ 
-  model: openrouterModel,
+  model: mistralModel,
   tools: [searchTool],
 })
 
